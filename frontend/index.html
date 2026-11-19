@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Finan Security</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="topo">
+        <div class="topo-conteudo">
+            <span class="marca">Finan Security</span>
+            <span class="usuario" id="usuario"></span>
+        </div>
+    </header>
+
+    <main class="pagina">
+        <p class="erro" id="erro" hidden></p>
+
+        <section class="saldo">
+            <p class="saldo-rotulo">Saldo total</p>
+            <p class="saldo-valor" id="saldo">R$ 0,00</p>
+            <div class="saldo-detalhes">
+                <p><span>Entradas</span><strong class="entrada" id="entradas">R$ 0,00</strong></p>
+                <p><span>Despesas</span><strong class="despesa" id="despesas">R$ 0,00</strong></p>
+            </div>
+        </section>
+
+        <section class="bloco">
+            <h2>Últimas movimentações</h2>
+            <ul class="lista" id="movimentacoes"></ul>
+        </section>
+
+        <section class="bloco">
+            <h2>Notificações</h2>
+            <ul class="lista" id="notificacoes"></ul>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

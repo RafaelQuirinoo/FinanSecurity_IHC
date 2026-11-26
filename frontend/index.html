@@ -10,6 +10,10 @@
     <header class="topo">
         <div class="topo-conteudo">
             <span class="marca">Finan Security</span>
+            <nav class="menu" id="menu" hidden>
+                <button class="link" onclick="abrirVisao()">Visão geral</button>
+                <button class="link" onclick="abrirMovimentacoes()">Movimentações</button>
+            </nav>
             <span class="usuario" id="usuario"></span>
         </div>
     </header>
@@ -17,23 +21,211 @@
     <main class="pagina">
         <p class="erro" id="erro" hidden></p>
 
-        <section class="saldo">
-            <p class="saldo-rotulo">Saldo total</p>
-            <p class="saldo-valor" id="saldo">R$ 0,00</p>
-            <div class="saldo-detalhes">
-                <p><span>Entradas</span><strong class="entrada" id="entradas">R$ 0,00</strong></p>
-                <p><span>Despesas</span><strong class="despesa" id="despesas">R$ 0,00</strong></p>
+        <section class="tela" id="tela-visao" hidden>
+            <p class="rotulo" id="data-hoje"></p>
+            <h1 id="ola"></h1>
+            <p class="suave">Aqui está o resumo da sua vida financeira hoje.</p>
+
+            <div class="saldo">
+                <p class="saldo-rotulo">Saldo disponível
+                    <button class="link" onclick="alternarValores()">Ocultar/mostrar valores</button>
+                </p>
+                <p class="saldo-valor valor" id="saldo">R$ 0,00</p>
+            </div>
+
+            <div class="tres">
+                <div class="cartao"><span class="suave">Entradas no mês</span><strong class="grande valor entrada" id="entradas-mes"></strong></div>
+                <div class="cartao"><span class="suave">Saídas no mês</span><strong class="grande valor despesa" id="saidas-mes"></strong></div>
+                <div class="cartao"><span class="suave">Movimentações no mês</span><strong class="grande" id="qtd-mes"></strong></div>
+            </div>
+
+            <div class="duas">
+                <div class="cartao">
+                    <p class="rotulo">Fluxo de caixa</p>
+                    <h2>Receitas e despesas do mês</h2>
+                    <div class="grafico">
+                        <div class="coluna"><span class="barra barra-entrada" id="barra-entradas"></span>Entradas</div>
+                        <div class="coluna"><span class="barra barra-saida" id="barra-saidas"></span>Saídas</div>
+                    </div>
+                </div>
+                <div class="cartao">
+                    <p class="rotulo">Atividade recente</p>
+                    <h2>Últimas movimentações</h2>
+                    <ul class="lista sem-borda" id="recentes"></ul>
+                    <button class="link verde" onclick="abrirMovimentacoes()">Ver todas</button>
+                </div>
+            </div>
+
+            <div class="insight"><strong>Insight Finan:</strong> <span class="valor" id="insight"></span></div>
+
+            <section class="bloco">
+                <h2>Notificações</h2>
+                <ul class="lista" id="notificacoes"></ul>
+            </section>
+        </section>
+
+        <section class="tela" id="tela-movimentacoes" hidden>
+            <div class="cabecalho">
+                <div>
+                    <h1>Movimentações</h1>
+                    <p class="suave">Consulte e acompanhe todas as entradas e saídas da sua conta.</p>
+                </div>
+                <button class="botao-claro" onclick="abrirNova()">+ Nova movimentação</button>
+            </div>
+
+            <div class="tres">
+                <div class="cartao"><span class="suave">Saldo do período</span><strong class="grande valor" id="p-saldo"></strong></div>
+                <div class="cartao"><span class="suave">Total de entradas</span><strong class="grande valor entrada" id="p-entradas"></strong></div>
+                <div class="cartao"><span class="suave">Total de saídas</span><strong class="grande valor despesa" id="p-saidas"></strong></div>
+            </div>
+
+            <div class="busca">
+                <input class="campo" type="search" id="busca" placeholder="Buscar por nome ou categoria" oninput="mostrarLista()">
+                <button class="chip ativo" onclick="filtrar('', this)">Todas</button>
+                <button class="chip" onclick="filtrar('entrada', this)">Entradas</button>
+                <button class="chip" onclick="filtrar('despesa', this)">Saídas</button>
+            </div>
+
+            <ul class="lista" id="lista-mov"></ul>
+            <p class="suave" id="rodape-lista"></p>
+        </section>
+
+        <section class="tela estreita" id="tela-detalhe" hidden>
+            <button class="link cinza" onclick="abrirMovimentacoes()">Voltar</button>
+            <h1>Detalhes da movimentação</h1>
+            <p class="suave">Confira todos os dados antes de tomar uma ação.</p>
+
+            <div class="cartao">
+                <div class="detalhe-topo">
+                    <span class="avatar" id="d-avatar"></span>
+                    <div class="cresce">
+                        <p class="status">Confirmada</p>
+                        <h2 id="d-nome"></h2>
+                        <span class="suave" id="d-sub"></span>
+                    </div>
+                    <strong class="detalhe-valor valor" id="d-valor"></strong>
+                </div>
+                <div class="info">
+                    <div><span class="suave">Data e hora</span><strong id="d-data"></strong></div>
+                    <div><span class="suave">Forma de pagamento</span><strong id="d-pagamento"></strong></div>
+                    <div><span class="suave">Identificador</span><strong id="d-id"></strong></div>
+                    <div><span class="suave">Categoria</span><strong id="d-categoria"></strong></div>
+                    <div><span class="suave">Conta</span><strong id="d-conta"></strong></div>
+                </div>
+                <div class="acao">
+                    <div><strong>Não reconhece esta compra?</strong><br><span class="suave">Você pode solicitar uma análise com segurança.</span></div>
+                    <button class="botao-escuro" onclick="abrirRevisao()">Solicitar revisão</button>
+                </div>
+            </div>
+            <p class="aviso"><strong>Sua segurança em primeiro lugar.</strong> Nunca solicitaremos sua senha durante este processo.</p>
+        </section>
+
+        <section class="tela estreita" id="tela-revisao" hidden>
+            <h1>Solicitar revisão</h1>
+            <p class="suave">Conte o que aconteceu para analisarmos a movimentação.</p>
+
+            <ol class="etapas">
+                <li class="feita"><span class="passo">1</span>Movimentação</li>
+                <li class="atual"><span class="passo">2</span>Motivo</li>
+                <li><span class="passo">3</span>Envio</li>
+            </ol>
+
+            <form class="cartao" id="form-revisao" onsubmit="enviarRevisao(event)">
+                <div class="detalhe-topo">
+                    <span class="avatar" id="r-avatar"></span>
+                    <div class="cresce">
+                        <p class="rotulo">Movimentação selecionada</p>
+                        <strong id="r-nome"></strong>
+                    </div>
+                    <strong class="valor" id="r-valor"></strong>
+                </div>
+
+                <h2>Qual é o motivo da revisão?</h2>
+                <label class="opcao"><input type="radio" name="motivo" value="Não reconheço esta compra" checked>
+                    <strong>Não reconheço esta compra</strong><br><span class="suave">Não realizei nem autorizei esta movimentação.</span></label>
+                <label class="opcao"><input type="radio" name="motivo" value="O valor está incorreto">
+                    <strong>O valor está incorreto</strong><br><span class="suave">O valor cobrado é diferente do esperado.</span></label>
+                <label class="opcao"><input type="radio" name="motivo" value="Compra duplicada">
+                    <strong>Compra duplicada</strong><br><span class="suave">A mesma cobrança aparece mais de uma vez.</span></label>
+
+                <p><strong>Conte mais detalhes</strong> <span class="suave">(opcional)</span></p>
+                <textarea class="campo" name="detalhes" rows="3" maxlength="240" placeholder="Descreva informações que possam ajudar na análise" oninput="contarLetras(this)"></textarea>
+                <p class="suave direita" id="contador">0/240 caracteres</p>
+
+                <label><input type="checkbox" required> Confirmo que as informações fornecidas são verdadeiras.</label>
+
+                <div class="acao">
+                    <button class="botao-claro" type="button" onclick="abrirDetalhe(movimentoAtual)">Cancelar</button>
+                    <button class="botao-escuro" type="submit">Enviar solicitação</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="tela estreita" id="tela-confirmacao" hidden>
+            <div class="cartao centro">
+                <span class="ok">OK</span>
+                <p class="rotulo">Solicitação enviada</p>
+                <h1>Recebemos sua solicitação</h1>
+                <p class="suave">Nossa equipe já iniciou a análise. Você será avisado assim que houver uma atualização.</p>
+
+                <div class="protocolo">
+                    <div><span class="suave">Número do protocolo</span><br><strong id="protocolo"></strong></div>
+                    <button class="link verde" id="copiar" onclick="copiarProtocolo()">Copiar</button>
+                </div>
+
+                <ol class="passos-analise">
+                    <li>Solicitação recebida em <span id="hora-recebida"></span></li>
+                    <li>Análise pelo Finan Security (prazo estimado: até 5 dias úteis)</li>
+                    <li>Retorno da análise (você receberá uma notificação)</li>
+                </ol>
+
+                <button class="botao-escuro" onclick="abrirVisao()">Voltar à visão geral</button>
             </div>
         </section>
 
-        <section class="bloco">
-            <h2>Últimas movimentações</h2>
-            <ul class="lista" id="movimentacoes"></ul>
+        <section class="tela estreita" id="tela-nova" hidden>
+            <button class="link cinza" onclick="abrirMovimentacoes()">Voltar</button>
+            <h1>Nova movimentação</h1>
+            <p class="suave">Registre uma entrada ou uma saída.</p>
+
+            <form class="cartao formulario" id="form-conta" onsubmit="salvarConta(event)" hidden>
+                <h2>Primeiro, crie uma conta</h2>
+                <label>Nome da conta <input class="campo" name="nome" maxlength="100" placeholder="Ex.: Conta corrente" required></label>
+                <label>Saldo inicial (R$) <input class="campo" name="saldo" type="number" min="0" step="0.01"></label>
+                <button class="botao-escuro" type="submit">Criar conta</button>
+            </form>
+
+            <form class="cartao formulario" id="form-mov" onsubmit="salvarMovimentacao(event)" hidden>
+                <label>Tipo
+                    <select class="campo" name="tipo">
+                        <option value="despesa">Saída (despesa)</option>
+                        <option value="entrada">Entrada</option>
+                    </select></label>
+                <label>Descrição <input class="campo" name="descricao" maxlength="255" required></label>
+                <label>Valor (R$) <input class="campo" name="valor" type="number" min="0.01" step="0.01" required></label>
+                <label>Conta <select class="campo" name="conta"></select></label>
+                <label>Categoria <select class="campo" name="categoria"></select></label>
+                <label>Forma de pagamento
+                    <select class="campo" name="pagamento">
+                        <option>Pix</option>
+                        <option>Cartão de débito</option>
+                        <option>Cartão de crédito</option>
+                        <option>Dinheiro</option>
+                        <option>Boleto</option>
+                    </select></label>
+                <button class="botao-escuro" type="submit">Salvar movimentação</button>
+            </form>
         </section>
 
-        <section class="bloco">
-            <h2>Notificações</h2>
-            <ul class="lista" id="notificacoes"></ul>
+        <section class="tela estreita" id="tela-cadastro" hidden>
+            <h1>Bem-vindo ao Finan Security</h1>
+            <p class="suave">Crie seu usuário para começar.</p>
+            <form class="cartao formulario" onsubmit="salvarUsuario(event)" id="form-usuario">
+                <label>Nome <input class="campo" name="nome" maxlength="100" required></label>
+                <label>E-mail <input class="campo" name="email" type="email" maxlength="150" required></label>
+                <label>Senha (mínimo 6 caracteres) <input class="campo" name="senha" type="password" minlength="6" required></label>
+                <button class="botao-escuro" type="submit">Cadastrar</button>
+            </form>
         </section>
     </main>
 
